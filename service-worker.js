@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/trivia-game/precache-manifest.e2748614e25334db332eb47d72e60a96.js"
+  "/trivia-game/precache-manifest.9bc0efe65320289d650a42760576544b.js"
 );
 
 self.addEventListener('message', (event) => {
