@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import ReactLoading from 'react-loading';
 import { v4 as uuidv4 } from 'uuid';
 import he from 'he';
+import QuestionText from './Question/questionText';
+import Answer from './Question/answer';
 
 function App() {
 
@@ -15,6 +17,15 @@ function App() {
   const [wrong, setWrong] = useState(0);
 
   const BASE_URL = 'https://opentdb.com/api.php?amount=1'
+  
+  const shuffle = (array) => {
+    const sortedArr = array;
+    for (let i = sortedArr.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [sortedArr[i], sortedArr[j]] = [sortedArr[j], sortedArr[i]];
+    }
+    return sortedArr;
+  }
 
   useEffect(() => {
     fetch(BASE_URL)
@@ -36,12 +47,8 @@ function App() {
   
   useEffect(() => {
     if (items[0] !== undefined) {
-      var answers = items[0].incorrect_answers.concat(items[0].correct_answer);
-      for (let i = answers.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [answers[i], answers[j]] = [answers[j], answers[i]];
-      }
-      setAnswers(answers);
+      var answers = [...items[0].incorrect_answers, items[0].correct_answer];
+      setAnswers(() => shuffle([...answers]));
     }
   }, [items]);
 
@@ -68,24 +75,35 @@ function App() {
     }
   }
 
+  function resetResults() {
+    setCount(1);
+    setCorrect(0);
+    setWrong(0);
+  }
+
   if (error) {
-    return <div>Error: {error.message}</div>
+    return <div data-testid="error">Error: {error.message}</div>
   }
   else if (!isLoaded) {
-    return <ReactLoading type="spin" color="#f50" />
+    return <ReactLoading data-testid="spinner" type="spin" color="#f50" />
   }
   else return (
     <>
       {items.map(item => {
-        return <div className="content" key={uuidv4()}>
+        return <div className="content" data-testid="content" key={uuidv4()}>
+          <div className="reset" onClick={() => resetResults()}>Reset</div>
           <div className="q-num">Question number {count}</div>
           <div>Correct answers: {correct}</div>
           <div>Wrong answers: {wrong}</div>
-          <div className="question">{he.decode(item.question)}</div>
+          <div className="question">
+            <QuestionText text={item.question} />
+          </div>
 
           <div className="options-group">
             {answers.map(option => {
-              return <div className="option-btn" onClick={() => clickable ? showCorrect(option) : null} key={uuidv4()}>{he.decode(option)}</div>
+              return <div className="option-btn" onClick={() => clickable ? showCorrect(option) : null} key={uuidv4()}>
+                <Answer answer={option} />
+              </div>
             })}
           </div>
           
