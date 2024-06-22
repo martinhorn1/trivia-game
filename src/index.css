@@ -20,6 +20,18 @@ body {
   margin: 0 auto;
 }
 
+.reset {
+  display: flex;
+  padding: 10px;
+  margin-right: 0;
+  margin-left: auto;
+  width: min-content;
+}
+
+.reset:hover {
+  background: rgba(255,0,0,.7);
+}
+
 .q-num {
   font-weight: bold;
   font-size: 2em;
